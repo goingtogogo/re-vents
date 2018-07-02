@@ -3,7 +3,7 @@ import { Container } from "semantic-ui-react";
 import { Route, Switch } from "react-router-dom";
 import EventDashboard from "./Dashboard";
 import Nav from "./Nav";
-import EventDetails from "./Dashboard/Details";
+import EventDetails from "./Dashboard/Details/index";
 import PeopleDashboard from "./User/Dashboard";
 import UserDetails from "./User/Details";
 import Settings from "./User/Settings";

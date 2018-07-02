@@ -1,5 +1,6 @@
 import { combineReducers } from "redux";
+import events from "../components/Dashboard/reducers";
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({ events });
 
 export default rootReducer;
