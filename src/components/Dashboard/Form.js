@@ -1,43 +1,53 @@
 import React, { Component } from "react";
+import cuid from "cuid";
 import { Segment, Form, Button } from "semantic-ui-react";
+import { connect } from "react-redux";
+import { createEvent, updateEvent } from "./actions";
 
-const emptyEvent = {
-  title: "",
-  date: "",
-  city: "",
-  venue: "",
-  hostedBy: ""
-};
+const mapState = (state, ownProps) => {
+  const eventId = ownProps.match.params.id;
 
-export default class EventForm extends Component {
-  state = {
-    event: emptyEvent
+  let event = {
+    title: "",
+    date: "",
+    city: "",
+    venue: "",
+    hostedBy: ""
   };
 
-  componentDidMount() {
-    if (this.props.selectedEvent !== null) {
-      this.setState({
-        event: this.props.selectedEvent
-      });
-    }
+  if (eventId && state.events.length > 0) {
+    event = state.events.filter(event => event.id === eventId)[0];
   }
+  return {
+    event
+  };
+};
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedEvent !== this.props.selectedEvent) {
-      this.setState({
-        event: nextProps.selectedEvent
-      });
-    }
-  }
+const actions = {
+  createEvent,
+  updateEvent
+};
+
+class EventForm extends Component {
+  state = {
+    event: Object.assign({}, this.props.event)
+  };
 
   onFormSubmit = e => {
     e.preventDefault();
-    const { createEvent, updateEvent } = this.props;
+    const { createEvent, updateEvent, history } = this.props;
     const { event } = this.state;
     if (event.id) {
       updateEvent(event);
+      history.goBack();
     } else {
-      createEvent(event);
+      const newEvent = {
+        ...this.state.event,
+        id: cuid(),
+        hostPhotoURL: "assets/user.png"
+      };
+      createEvent(newEvent);
+      history.push("/events");
     }
   };
 
@@ -52,7 +62,7 @@ export default class EventForm extends Component {
   };
 
   render() {
-    const { handleCancelForm } = this.props;
+    const { history } = this.props;
     const { event } = this.state;
     return (
       <Segment>
@@ -106,7 +116,7 @@ export default class EventForm extends Component {
           <Button color="grey" type="submit">
             Submit
           </Button>
-          <Button onClick={handleCancelForm} type="button">
+          <Button onClick={() => history.goBack()} type="button">
             Cancel
           </Button>
         </Form>
@@ -114,3 +124,8 @@ export default class EventForm extends Component {
     );
   }
 }
+
+export default connect(
+  mapState,
+  actions
+)(EventForm);
