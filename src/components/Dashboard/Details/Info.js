@@ -1,7 +1,17 @@
 import React, { Component } from "react";
 import { Segment, Grid, Icon, Button } from "semantic-ui-react";
+import Map from "./Map";
 
 export default class Info extends Component {
+  state = {
+    showMap: false
+  };
+
+  showMapToggle = () => {
+    this.setState(prevState => ({
+      showMap: !prevState.showMap
+    }));
+  };
   render() {
     const { event } = this.props;
     return (
@@ -35,10 +45,18 @@ export default class Info extends Component {
               <span>{event.venue}</span>
             </Grid.Column>
             <Grid.Column width={4}>
-              <Button color="teal" size="tiny" content="Show Map" />
+              <Button
+                onClick={this.showMapToggle}
+                color="teal"
+                size="tiny"
+                content={this.state.showMap ? "Hide Map" : "Show Map"}
+              />
             </Grid.Column>
           </Grid>
         </Segment>
+        {this.state.showMap && (
+          <Map lat={event.venueLatLng.lat} lng={event.venueLatLng.lng} />
+        )}
       </Segment.Group>
     );
   }
