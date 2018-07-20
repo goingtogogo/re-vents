@@ -9,11 +9,13 @@ import UserDetails from "./User/Details";
 import Settings from "./User/Settings";
 import EventForm from "./Dashboard/Form";
 import Home from "./Home";
+import Manager from "./Modals/Manager";
 
 class App extends Component {
   render() {
     return (
       <div>
+        <Manager />
         <Switch>
           <Route exact path="/" component={Home} />
         </Switch>
