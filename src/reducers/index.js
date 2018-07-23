@@ -3,12 +3,14 @@ import { reducer as FormReducer } from "redux-form";
 import events from "../components/Dashboard/reducers";
 import modals from "../components/Modals/reducer";
 import auth from "../components/Auth/reducer";
+import async from "../components/Async/reducer";
 
 const rootReducer = combineReducers({
   events,
   form: FormReducer,
   modals,
-  auth
+  auth,
+  async
 });
 
 export default rootReducer;
