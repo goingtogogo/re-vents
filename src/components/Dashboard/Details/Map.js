@@ -7,7 +7,6 @@ const Marker = () => <Icon name="marker" size="big" color="red" />;
 export default ({ lat, lng }) => {
   const center = [lat, lng];
   const zoom = 14;
-  console.log(center);
   return (
     <Segment attached="bottom" style={{ padding: 0 }}>
       <div style={{ height: "300px", width: "100%" }}>

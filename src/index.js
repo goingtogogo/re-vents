@@ -10,10 +10,8 @@ import App from "./components/App";
 import registerServiceWorker from "./registerServiceWorker";
 import { configureStore } from "./store";
 import ScrollToTop from "./common/ScrollToTop";
-import { loadEvents } from "./components/Dashboard/actions";
 
 const store = configureStore();
-store.dispatch(loadEvents());
 const rootEl = document.getElementById("root");
 
 let render = () => {

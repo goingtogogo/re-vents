@@ -8,11 +8,18 @@ export default class Info extends Component {
     showMap: false
   };
 
+  componentWillUnmount() {
+    this.setState({
+      showMap: false
+    });
+  }
+
   showMapToggle = () => {
     this.setState(prevState => ({
       showMap: !prevState.showMap
     }));
   };
+
   render() {
     const { event } = this.props;
     return (
