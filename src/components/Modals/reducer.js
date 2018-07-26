@@ -5,7 +5,6 @@ const initialState = null;
 
 export const openModal = (state, payload) => {
   const { modalType, modalProps } = payload;
-  console.log("payload:", payload);
   return { modalType, modalProps };
 };
 

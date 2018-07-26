@@ -2,15 +2,16 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { NavLink, Link, withRouter } from "react-router-dom";
 import { Menu, Container, Button } from "semantic-ui-react";
+import { withFirebase } from "react-redux-firebase";
 import SignOut from "./Menus/SignOut";
 import SignIn from "./Menus/SignIn";
 import { openModal } from "../Modals/actions";
-import { logout } from "../Auth/actions";
 
-const actions = { openModal, logout };
+const actions = { openModal };
 
 const mapState = state => ({
-  auth: state.auth
+  auth: state.firebase.auth,
+  profile:state.firebase.profile
 });
 
 class Nav extends Component {
@@ -23,12 +24,13 @@ class Nav extends Component {
   };
 
   handleSignOut = () => {
-    this.props.logout();
+    this.props.firebase.logout();
     this.props.history.push("/");
   };
 
   render() {
-    const { auth } = this.props;
+    const { auth, profile } = this.props;
+    const authentificated = auth.isLoaded && !auth.isEmpty;
     return (
       <Menu inverted fixed="top">
         <Container>
@@ -37,11 +39,11 @@ class Nav extends Component {
             Re-vents
           </Menu.Item>
           <Menu.Item as={NavLink} to="/events" name="Events" />
-          {auth.authentificated && (
+          {authentificated && (
             <Menu.Item as={NavLink} to="/people" name="People" />
           )}
           <Menu.Item>
-            {auth.authentificated && (
+            {authentificated && (
               <Button
                 floated="right"
                 as={Link}
@@ -51,11 +53,8 @@ class Nav extends Component {
               />
             )}
           </Menu.Item>
-          {auth.authentificated ? (
-            <SignIn
-              signOut={this.handleSignOut}
-              currentUser={auth.currentUser}
-            />
+          {authentificated ? (
+            <SignIn signOut={this.handleSignOut} profile={profile} />
           ) : (
             <SignOut
               signIn={this.handleSignIn}
@@ -69,8 +68,10 @@ class Nav extends Component {
 }
 
 export default withRouter(
-  connect(
-    mapState,
-    actions
-  )(Nav)
+  withFirebase(
+    connect(
+      mapState,
+      actions
+    )(Nav)
+  )
 );
