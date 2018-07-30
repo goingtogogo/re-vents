@@ -19,6 +19,10 @@ const eventImageTextStyle = {
 export default class DetailsHeader extends Component {
   render() {
     const { event } = this.props;
+    let eventDate;
+    if (event.date) {
+      eventDate = event.date.toDate();
+    }
     return (
       <Segment.Group>
         <Segment basic attached="top" style={{ padding: "0" }}>
@@ -37,7 +41,7 @@ export default class DetailsHeader extends Component {
                     content={event.title}
                     style={{ color: "white" }}
                   />
-                  <p>{format(event.date, "dddd Do MMMM")}</p>
+                  <p>{format(eventDate, "dddd Do MMMM")}</p>
                   <p>
                     Hosted by <strong>{event.hostedBy}</strong>
                   </p>

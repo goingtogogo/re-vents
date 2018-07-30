@@ -5,7 +5,7 @@ import EventDashboard from "./Dashboard";
 import Nav from "./Nav";
 import EventDetails from "./Dashboard/Details/index";
 import PeopleDashboard from "./User/Dashboard";
-import UserDetails from "./User/Details";
+import UserDetails from "./User/Details/";
 import Settings from "./User/Settings";
 import EventForm from "./Dashboard/Form";
 import Home from "./Home";

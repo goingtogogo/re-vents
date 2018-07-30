@@ -11,7 +11,7 @@ const actions = { openModal };
 
 const mapState = state => ({
   auth: state.firebase.auth,
-  profile:state.firebase.profile
+  profile: state.firebase.profile
 });
 
 class Nav extends Component {
@@ -54,7 +54,11 @@ class Nav extends Component {
             )}
           </Menu.Item>
           {authentificated ? (
-            <SignIn signOut={this.handleSignOut} profile={profile} />
+            <SignIn
+              signOut={this.handleSignOut}
+              profile={profile}
+              auth={auth}
+            />
           ) : (
             <SignOut
               signIn={this.handleSignIn}
