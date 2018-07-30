@@ -1,12 +1,13 @@
 import React, { Component } from "react";
-import { Segment, Icon, List, Button, Item } from "semantic-ui-react";
+import { Segment, Icon, List, Button, Item, Label } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 import format from "date-fns/format";
 import Attendee from "./Attendee";
+import { objectToArray } from "../../../common/helper";
 
 export default class Event extends Component {
   render() {
-    const { event, deleteEvent } = this.props;
+    const { event } = this.props;
     return (
       <div>
         <Segment.Group>
@@ -15,10 +16,23 @@ export default class Event extends Component {
               <Item>
                 <Item.Image size="tiny" circular src={event.hostPhotoURL} />
                 <Item.Content>
-                  <Item.Header as="a">{event.title}</Item.Header>
+                  <Item.Header as={Link} to={`event/${event.id}`}>
+                    {event.title}
+                  </Item.Header>
                   <Item.Description>
-                    Hosted by <a>{event.hostedBy}</a>
+                    Hosted by{" "}
+                    <Link to={`profile/${event.hostUid}`}>
+                      {event.hostedBy}
+                    </Link>
                   </Item.Description>
+                  {event.cancelled && (
+                    <Label
+                      style={{ top: "-50px" }}
+                      ribbon="right"
+                      color="red"
+                      content="This event has been cancelled"
+                    />
+                  )}
                 </Item.Content>
               </Item>
             </Item.Group>
@@ -34,8 +48,8 @@ export default class Event extends Component {
           <Segment secondary>
             <List horizontal>
               {event.attendees &&
-                Object.values(event.attendees).map((attendee, index) => (
-                  <Attendee attendee={attendee} key={index} />
+                objectToArray(event.attendees).map(attendee => (
+                  <Attendee attendee={attendee} key={attendee.id} />
                 ))}
             </List>
           </Segment>
@@ -47,13 +61,6 @@ export default class Event extends Component {
               as={Link}
               to={`/event/${event.id}`}
               content="View"
-            />
-            <Button
-              onClick={deleteEvent(event.id)}
-              as="a"
-              color="red"
-              floated="right"
-              content="Delete"
             />
           </Segment>
         </Segment.Group>

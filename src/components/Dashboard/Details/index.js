@@ -2,12 +2,13 @@ import React from "react";
 import { Grid } from "semantic-ui-react";
 import { connect } from "react-redux";
 import { withFirestore } from "react-redux-firebase";
-import { toastr } from "react-redux-toastr";
+// import { toastr } from "react-redux-toastr";
 import Chat from "./Chat";
 import Info from "./Info";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { objectToArray } from "../../../common/helper";
+import { goingToEvent, cancelGoingToEvent } from "../../User/actions";
 
 const mapStateToProps = state => {
   let event = {};
@@ -16,28 +17,43 @@ const mapStateToProps = state => {
     event = state.firestore.ordered.events[0];
   }
   return {
-    event
+    event,
+    auth: state.firebase.auth
   };
+};
+
+const actions = {
+  goingToEvent,
+  cancelGoingToEvent
 };
 
 class EventDetails extends React.Component {
   async componentDidMount() {
-    const { firestore, match, history } = this.props;
-    let event = await firestore.get(`events/${match.params.id}`);
-    if (!event.exists) {
-      history.push("/events");
-      toastr.error("Sorry", "Event not found");
-    }
+    const { firestore, match } = this.props;
+    await firestore.setListener(`events/${match.params.id}`);
+  }
+
+  async componentWillUnMount() {
+    const { firestore, match } = this.props;
+    await firestore.unsetListener(`events/${match.params.id}`);
   }
 
   render() {
-    const { event } = this.props;
+    const { event, auth, goingToEvent, cancelGoingToEvent } = this.props;
     const attendees =
       event && event.attendees && objectToArray(event.attendees);
+    const isHost = event.hostUid === auth.uid;
+    const isGoing = attendees && attendees.some(a => a.id === auth.uid);
     return (
       <Grid>
         <Grid.Column width={10}>
-          <Header event={event} />
+          <Header
+            event={event}
+            isHost={isHost}
+            isGoing={isGoing}
+            goingToEvent={goingToEvent}
+            cancelGoingToEvent={cancelGoingToEvent}
+          />
           <Info event={event} />
           <Chat />
         </Grid.Column>
@@ -49,4 +65,9 @@ class EventDetails extends React.Component {
   }
 }
 
-export default withFirestore(connect(mapStateToProps)(EventDetails));
+export default withFirestore(
+  connect(
+    mapStateToProps,
+    actions
+  )(EventDetails)
+);

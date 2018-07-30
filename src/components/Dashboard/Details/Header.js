@@ -18,7 +18,13 @@ const eventImageTextStyle = {
 
 export default class DetailsHeader extends Component {
   render() {
-    const { event } = this.props;
+    const {
+      event,
+      isHost,
+      isGoing,
+      goingToEvent,
+      cancelGoingToEvent
+    } = this.props;
     let eventDate;
     if (event.date) {
       eventDate = event.date.toDate();
@@ -52,17 +58,24 @@ export default class DetailsHeader extends Component {
         </Segment>
 
         <Segment attached="bottom">
-          <Button>Cancel My Place</Button>
-          <Button color="teal">JOIN THIS EVENT</Button>
-
-          <Button
-            as={Link}
-            to={`/manage/${event.id}`}
-            color="orange"
-            floated="right"
-          >
-            Manage Event
-          </Button>
+          {!isHost && (
+            <div>
+              {isGoing ? (
+                <Button onClick={() => cancelGoingToEvent(event)}>
+                  Cancel My Place
+                </Button>
+              ) : (
+                <Button color="teal" onClick={() => goingToEvent(event)}>
+                  JOIN THIS EVENT
+                </Button>
+              )}
+            </div>
+          )}
+          {isHost && (
+            <Button as={Link} to={`/manage/${event.id}`} color="orange">
+              Manage Event
+            </Button>
+          )}
         </Segment>
       </Segment.Group>
     );

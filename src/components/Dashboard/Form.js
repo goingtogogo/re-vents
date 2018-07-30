@@ -69,12 +69,12 @@ class EventForm extends Component {
 
   async componentDidMount() {
     const { firestore, match } = this.props;
-    let event = await firestore.get(`events/${match.params.id}`);
-    if (event.exists) {
-      this.setState({
-        venueLatLng: event.data().venueLatLng
-      });
-    }
+    await firestore.setListener(`events/${match.params.id}`);
+  }
+
+  async componentWillUnMount() {
+    const { firestore, match } = this.props;
+    await firestore.unsetListener(`events/${match.params.id}`);
   }
 
   handleScriptLoaded = () => {
@@ -105,8 +105,17 @@ class EventForm extends Component {
 
   onFormSubmit = values => {
     values.venueLatLng = this.state.venueLatLng;
-    const { createEvent, updateEvent, history, initialValues, cancelToggle } = this.props;
+    const {
+      createEvent,
+      updateEvent,
+      history,
+      initialValues,
+      event
+    } = this.props;
     if (initialValues.id) {
+      if (Object.keys(values.venueLatLng).length === 0) {
+        values.venueLatLng = event.venueLatLng;
+      }
       updateEvent(values);
       history.goBack();
     } else {
@@ -116,7 +125,7 @@ class EventForm extends Component {
   };
 
   render() {
-    const { invalid, submitting, pristine, event } = this.props;
+    const { invalid, submitting, pristine, event, cancelToggle } = this.props;
     const { history, handleSubmit } = this.props;
     return (
       <Grid>
@@ -184,13 +193,14 @@ class EventForm extends Component {
               <Button onClick={() => history.goBack()} type="button">
                 Cancel
               </Button>
-              <Button 
-              type="button" 
-              onClick={() => cancelToggle(!event.cancelled, event.id)} 
-              color={event.cancelled ? "green" : "red"} 
-                 {/* content={event.cancelled ? "Reactiate event" : "Cancel event"} */}
-              floated='right' />
-       </Form>
+              <Button
+                type="button"
+                onClick={() => cancelToggle(!event.cancelled, event.id)}
+                color={event.cancelled ? "green" : "red"}
+                content={event.cancelled ? "Reactiate event" : "Cancel event"}
+                floated="right"
+              />
+            </Form>
           </Segment>
         </Grid.Column>
       </Grid>

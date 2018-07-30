@@ -24,7 +24,7 @@ export const createEvent = event => {
     let newEvent = createNewEvent(user, photoURL, event);
     try {
       let createdEvent = await firestore.add(`events`, newEvent);
-      await firestore.set(`event.attendee/${createdEvent.id}_${user.uid}`, {
+      await firestore.set(`event_attendee/${createdEvent.id}_${user.uid}`, {
         eventId: createdEvent.id,
         userUid: user.uid,
         eventDate: event.date,
@@ -58,9 +58,15 @@ export const cancelToggle = (cancelled, eventId) => async (
   { getFirestore }
 ) => {
   const firestore = getFirestore();
+  const message = cancelled
+    ? "Are  you sure you want cancel the event?"
+    : "This will reactivate the event are you sure";
   try {
-    await firestore.update(`events/${eventId}`, {
-      cancelled: cancelled
+    toastr.confirm(message, {
+      onOk: () =>
+        firestore.update(`events/${eventId}`, {
+          cancelled: cancelled
+        })
     });
   } catch (error) {
     console.log(error);
