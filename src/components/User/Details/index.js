@@ -9,6 +9,7 @@ import Sidebar from "./Sidebar";
 import Description from "./Description";
 import Photos from "./Photos";
 import { userDetailedQuery as query } from "../queries";
+import Loader from "../../Loader";
 
 const mapStateToProps = (state, ownProps) => {
   let userUid = null;
@@ -25,14 +26,17 @@ const mapStateToProps = (state, ownProps) => {
     auth: state.firebase.auth,
     photos: state.firestore.ordered.photos,
     profile,
-    userUid
+    userUid,
+    requesting: state.firestore.status.requesting
   };
 };
 
 class UserDetailedPage extends Component {
   render() {
-    const { photos, profile, auth, match } = this.props;
+    const { photos, profile, auth, match, requesting } = this.props;
     const isCurrentUser = auth.uid === match.params.id;
+    const loading = Object.values(requesting).some(a => a === true);
+    if (loading) return <Loader inverted={true} />;
     return (
       <Grid>
         <Header profile={profile} />
